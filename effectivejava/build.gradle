@@ -1,0 +1,12 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
+dependencies {
+
+    //lombok
+    compileOnly 'org.projectlombok:lombok'
+
+    //test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
