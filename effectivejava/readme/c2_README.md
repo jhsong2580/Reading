@@ -218,3 +218,34 @@ public class Stack {
       - Key에 대한 Value가 없어도, 해당 Key는 남아있는다. 
    - Weakhashmap은 WeakReference특성을 이용하여 HashMap의 element를 자동 GC 해버린다. key에 해당하는 객체가 더이상 사용되지 않는다고 판단되면 제거한다. 
    ```
+   
+---
+### finalizer와 cleaner사용을 피하라 
+- 자바는 finalizer, cleaner라는 객체 소멸자를 제공한다.
+  - finalizer? cleaner?
+    - finalizer : 예측할수 없고 상황에 따라 위험할 수 있다. 
+    - cleaner : finalizer보단 덜 위험하지만 여전히 예측할수  없고 느리고 위험하다.
+  - 왜 위험한가
+    1. finalizer,  cleaner의 실행 시점은 전적으로 GC 알고리즘에 달려있으며, 상황마다 메모리 회수 속도가 달라진다. 
+      - 나는 잘 됬는데 고객 시스템에 가서는 대형 장애를 일으킬수 있
+    2. finalizer, cleaner는 실행 시점도 정확하지 않으나, 실행 여부도 정확하지 않다. 자원에 대한 반환은 Try-Catch-Resource로 대신하자
+      [example3](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch02/Example.java)
+      [example4](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch02/Example.java)
+    3. finalizer, cleaner는 성능 문제도 있다. 
+          - AutoClosable을 통한 GC 소요시간을 1이라 한다면, finalizer/cleaner는 약 50배 가량 느리다 
+    4. finalizer을 사용한 Class는 finalizer공격에 노출되어 보안문제를 일으킬 수도 있다. 
+       - 생성자/직렬화 과정(readObject, readResolve)에서 예외가 발생하면, 생성되다 만 객체에서 악의적인 하위 클래스의 finalizer가 수행되게 된다. 
+         - finalizer을 사용할꺼면 final을 붙여 사용하자 (이 finalizer을 override하지 못하게끔)
+  - 그럼 어디다 쓰는걸까?
+    - 자원 소유자가 close 메서드를 호출하지 않는 것에 대한 안전망
+    - native peer와 연결된 객체에서 사용
+      - native peer ? : 일반 자바 객체가 네이티브 메서드를 통해 기능을 위임한 객체로써 자바 객체가 아님
+        - 자바객체가 아니기 때문에 GC가 알아차리지 못하여 수동으로 메모리 정리를 해주어야
+  
+---
+### try-finally 보다는 try-with-resource를 사용하라
+- finally 안에서 자원을 반환하게되면 예기치못한 에러에 의해 자원이 정상 반환이 안될수 있다.
+  [example5](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch02/Example.java)
+- try-catch-resource로 자원을 반환하게되면 예기치못한 에러가 있어도 자원이 정상 반환된다.
+  [example6](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch02/Example.java)
+- 
