@@ -89,4 +89,38 @@ package-private class Point {
 - 불변클래스의 단점은 값이 다르다면 "반드시 독립된 객체로 만들어야한다" 라는 것이다. 
   - 이것때문에, 속도나 메모리상에 효율이 떨어질수 있다. 
   - [불변객체의단점은_값이다르면_무조건_새로운객체로만든다](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c4_README.md)
+
+---
+### 아이템 18 상속보다는 컴포지션을 사용하라 
+- 상속은 코드를 재사용 하는 강력한 수단이지만, 경계를 넘어 다른 패캐지의 클래스를 상속하는것은 매우 위험하다 
+  - 클래스가 인터페이스를 구현하거나, 인터페이스가 인터페이스를 확장하는건 관계가 없고, 구현체를 상속받아 확장하는것이 문제가 된다. 
+
+### 메서드 호출과 달리 상속은 캡슐화를 깨뜨린다.
+- 상속은 강력하지만 캡술화를 해친다는 문제가 있다. 상속은 상위 클래스와 하위 클래스가 순수한 is-a 관계일 때만 써야 한다. 
+  - 상속의 취약점을 피하려면 상속 대신 컴포지션과 전달을 사용하자! 래퍼 클래스는 하위 클래스보다 견고하고 강력하다. 
+- 상위 클래스가 어떻게 구현 되느냐에 따라 하위 클래스의 동작에 이상이 생길 수 있다. 
+  - [잘못된_상속은_예상치못한에러를_발생시킨다](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c4_README.md)
+  - 또한 다음 패치에서 상위 클래스에 새로운 메서드를 추가한다면, 해당 메서드에 대해서 검증 및 보안 패치가 추가로 진행 되어야 할 것이다.
+- 이러한 재정의가 문제가 될수 있어, 기존 클래스를 확장하는 대신 "새로운 클래스를 만들고 private필드로, 기존 클래스의 인스턴스를 참조하게 하자"(컴포지션)
+  ```
+  public class ForwardingSet<E> implements Set<E> {
+    private final Set<E> s; // 컴포지션! 거의 일급클래스같이 생겼다 
+    //Set에 대한 모든 메서드에 대해 this.s 를 통해 구현한다. 
+  }  
   
+  public InstrumentedhashSet<E> extends ForwardingSet<E> {
+    private int addCount = 0;
+    public InstrumentedhashSet(Set<E> s) {
+        super(s);
+    }
+  
+    public void add(~) { // domain.ch04.item18.InstrumentedHashSet과 똑같으나, Set의 add가 아닌, ForwardSet의 add를 사용한다. 
+        addCount++;
+        super(e);
+    }
+  }
+  ```
+  - 이러한 Wrapper Class는 Set에 기능을 덧씌운다는 뜻에서 "데코레이터 패턴"이라고 한다. 
+  - 하지만 Wrapper Class는 Callback Framework와는 어울리지 않는다. 
+    - Callback때는 Wrapper Class가 아닌, this를 넘겨 데코레이팅 한 기능이 동작하지 않는다.
+---

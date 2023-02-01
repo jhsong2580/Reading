@@ -3,8 +3,10 @@ package ch04;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import domain.ch04.item18.InstrumentedHashSet;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,5 +58,20 @@ public class Example {
 
         //then
         assertThat(a).isEqualTo(5L * 1000000000L + 3L);
+    }
+
+    @Test
+    public void 잘못된_상속은_예상치못한에러를_발생시킨다 (){
+        //given
+        InstrumentedHashSet<String> s = new InstrumentedHashSet<>();
+
+        //when
+        s.addAll(List.of("hey", "hello", "houe"));
+        /**
+          * addCount는 3이여야 맞지만, hashSet.addAll() 에서 호출하는 add()는 InstrumentedHashSet.add()를 호출하게 되어 addCount가 두번씩 저장되어 배가 된다.
+        */
+
+        //then
+        assertThat(s.getAddCount()).isNotEqualTo(3);
     }
 }
