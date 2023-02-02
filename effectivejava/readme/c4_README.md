@@ -124,3 +124,60 @@ package-private class Point {
   - 하지만 Wrapper Class는 Callback Framework와는 어울리지 않는다. 
     - Callback때는 Wrapper Class가 아닌, this를 넘겨 데코레이팅 한 기능이 동작하지 않는다.
 ---
+### 상속을 고려해 설계하고 문서화 하라. 그러지 않았다면 상속을 금지하라
+- 상속용 클래스는 재정의할수 있는 메서드들을 내부적으로 어떻게 이용하는지 문서로 남겨야 한다. 
+- API 문서의 메서드 설명 끝에서 "Implementation Requiredments"로 시작하는 절이 있는데 그 메서드의 내부 동작 방식을 설명해준다 
+  - @implSpec 태그를 붇혀주면 자바독 도구가 생성해준다.
+  - [예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item18/ImplSpecTagInterface.java)
+  - 하지만 가장 확실한건 "상속을 고려하지 않은 함수는 상속하지 못하게 막아라!"
+- 그리고 효율적인 하위 클래스를 큰 어려움 없이 만들수 있게 하려면 클래스의 내부 동작 과정 중간에 끼어들 수 있는 훅(hook)을 잘 선별하여, protected 메서드 형태로 공개해야 할수도 있다. 
+  - AbstractList.removeRange 함수는 clear()함수를 더욱 고성능으로 수행할수 있게 만들어둔 함수이다. 
+  - 만약 removeRange()함수가 없다면 clear 성능이 안좋아지고 이러한 기능을 바닥부터 끝까지 새로 만들어야 할 것이다. 
+- 그렇다면 어떤 클래스를 protected로 노출해야할까?
+
+### 상속용 클래스를 시험하는 방법은 직접 하위클래스를 만들어 보는것이 유일하다.
+- 꼭 필요한 protected 함수(hook)을 놓쳤다면, 하위 클래스를 작성할때 그 빈자리가 드러난다.
+- 거꾸로 하위 클래스를 여러개 만들때까지 사용하지 않는 protected함수는 private 접근제어자였어야 할 가능성이 크다.
+
+### 상속용 클래스의 생성자는 직접적으로든 간접적으로든 재정의 기능 메서드를 호출해서는 안된다. 
+- 상위 클래스의 생성자가 하위 클래스의 생성자보다 먼저 실행되므로, 하위 클래스에서 재정의한 메서드가 하위클래스의 생성자보다 먼저 동작한다.
+  - 아래 "Child" 클래스를 생성하게 되면, Child Class의 생성 로직이 호출되지 않았음에도, 재정의된 Child의 "overrideMe" 함수가 호출되어 문제를 일으킬 수 있다. 
+```
+public class Super {
+ // 잘못된 예 - 생성자가 재정의 가능 메서드를 호출한다.
+  public Super() {
+    overrideMe();
+  }
+  
+  public void overrideMe(){
+  
+  }
+}
+
+public class Child extends Super {
+    public Child(){
+      super();
+      // doSomeThing
+    }
+    
+    @Override
+    public void overrideMe() {
+        // doSomeThing Of Child
+    }
+}
+```
+### Clone과 readObject모두 직접적으로든, 간접적으로든 재정의 가능 메서드를 호출해서는 안된다. 
+- readObject의 경우, 하위 클래스의 상태가 미처 다 역직렬화 되기 전에 재정의한 메서드 부터 호출하게 된다.
+  - Serializable을 구현한 상속용 클래스가 readResolve나 writeReplace메서드를 갖는다면, 이 메서드는 protected로 선언해야한다. 
+    - private일시 하위 클래스에서 무시되기때문.
+- clone의 경우 하위 클래스의 clone메서드가, 복제본의 상태를 올바른 상태로 수정하기 전에 재정의한 메서드를 호출하게 된다. 
+  - 하위 클래스의 생성자가 동작을 하지 않은 상태에서 하위 클래스의 Override한 메서드를 호출한다면, 정상적으로 clone이 되었다고 보기 힘들수 있다. 
+
+### 상속을 하지 못하게 할 클래스는 무조건 상속을 금지하라
+1. final로 클래스를 선언한다.
+2. 모든 생성자를 private, package-private으로 선언하고 정적팩터리 메서드를 사용한다. 
+3. 만약 구체 클래스가 인터페이스를 구현하지 않았지만 상속을 허용해야 한다면 "클래스 내부에선 Override가 가능한 메서드를 호출하지 않아야 한다"
+   - 예상한 동작 순서가 하위 구현체들의 동작에 의해 꼬인다!
+
+---
+### 추상 클래스보다는 인터페이스를 우선하라 
