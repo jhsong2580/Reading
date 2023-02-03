@@ -180,4 +180,70 @@ public class Child extends Super {
    - 예상한 동작 순서가 하위 구현체들의 동작에 의해 꼬인다!
 
 ---
-### 추상 클래스보다는 인터페이스를 우선하라 
+### 아이템 20 추상 클래스보다는 인터페이스를 우선하라
+- 다중 구현용 타입은 인터페이스가 가장 적합하다. 복잡한 인터페이스라면 구현의 수고를 덜어주는 default method 등을 사용하자 
+1. 기존 클래스에도 손쉽게 새로운 인터페이스를 구현해 놓을수 있다. 
+   - 만약 추상클래스를 끼워 넣는다면, 기존 클래스가 상속받고있는 추상클래스의 상위 추상클래스에 추가할 메서드를 넣어줘야한다. 
+     - 이렇게 되면 하위 모든 클래스들이 영향을받는다 (같은 조상 클래스밖에 키워넣을수밖에없다)
+   - 인터페이스는 같은 조상이 아니여도, 기존 클래스에만 영향을 주는 인터페이스를 추가할수 있다.
+     - 다른 조상을 넣을수 있고 다중상속이 되기 때문에. 
+2. 인터페이스는 mixin정의에 안성맞춤이다. 
+   - MixIn : 클래스가 구현할 수 있는 타입으로, 믹스인을 구현한 클래스에 원래의 타입 외에도 특정 선택정 행위를 제공한다고 선언하는 효과를 줌.
+     - Comparable이 자신을 구현한 클래스의 인스턴스끼리는 순서를 정할수 있다고 선언하는 믹스인 인터페이스
+   - 추상클래스로는 MixIn을 정의할수 없다. 기존 클래스에 덧씌울수도 없고 단일 상속이기때문에 믹스인을 삽입할 수 있는 위치를 찾기 어렵다. 
+3. 인터페이스로는 계층구조가 없는 타입 프레임워크를 만들수 있다. 
+   - [인터페이스를통한 다중상속](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item20/SingerSongWriterByInterface.java)
+   - SingerSongWriterByInterface 클래스는 Singer와 Songwriter을 상속받아 구현을 한다. 
+   - 만약 SingInterface, SongWriterInterface가 Abstract Class 라면 다중상속은 불가능하다 .
+     - 이 기능을 합쳐놓은 또다른 추상클래스를 만들어야한다. (같은 조상이 아니기때문에)
+4. 래퍼클래스를 사용하면 인터페이스는 기능을 향상시키고 안전한, 강력한 수단이 된다.
+   - 타입을 추상클래스로 정의해두면, 기능을 구현하는 방법은 "상속"뿐이다. 
+   - 인터페이스는 굳이 사용자들이 구현할 필요가 없는 메서드를 "디폴트 메서드"로 제공하여 일감을 덜어줄 수 있다. 
+     - [다양한 상속관계가 있는 interface는 디폴트메서드와 골격메서드를 추가한다](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item20/Parent.java)
+
+---
+### 아이템 21 인터페이스는 구현하는 쪽을 생각하여 설계하라.
+- 인터페이스에 메서드를 삽입하기 위해서는 default method가 사용된다.
+  - 추상메서드로 했을때 구현체들 전부 업데이트가 이루어 져야 하기 때문이다. 
+  - 하지만 default method는 구현체들의 동의없이 삽입되는 것이라 구현체들이 사용했을때 비 정상적인 동작을 할수도 있다. 
+  - 즉 default method는 컴파일에 성공하더라도, 서비스 실행 중에 런타임 오류를 일으킬 수 있어 매우 조심해야한다.
+
+---
+### 아이템 22 인터페이스는 타입을 정의하는 정도로만 사용하라
+- 인터페이스는 타입을 정의하는 용도로만 사용하고 상수 공개용 수단으로 사용하지 말자 
+- 인터페이스는 자신을 구현한 클래스의 인스턴스를 참조할 수 있는 타입 역할을 한다. 
+- 아래 잘못된 인터페이스 사용인 "상수 인터페이스"를 보자 
+  - 상수 인터페이스는 메서드 없이 상수를 뜻하는 static final 로 가득찬 interface이다. 
+  - PhsicalConstant를 상속받는 구현체들은 해당 상수를 사용하지 않아도 계속 가지고 있게 된다. 
+  - 상수는 클래스 내부 구현이기 때문에, 상수로 설정함으로써 내부 구현을 외부로 노출시키는 일을 초래한다.
+```
+public interface PhysicalConstants { 
+    static final double AVOGADROS_NUMBER = 6.022_140_85;
+}
+```
+- 상수를 공개할 목적이라면 아래와 같이 하자 
+  - 구현체를 만들어, 상속을 못하게 한 뒤 상수를 선언하자 
+```
+public final class PhysicalConstants {
+    public static final double AVOGADROS_NUMBER = 6.022_140_85;
+}
+```
+---
+### 아이템 23 태그 달린 클래스보다는 클래스 계층 구조를 활용하라
+- 태그 달린 클래스는 장황하고, 오류를 내기 쉽고 ,비효율 적이고 클래스 계층구조를 어설프게 흉내낸 것일 뿐이다.
+  - [badCase](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item23/FigureBadCase.java)
+  - [goodCase](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item23/FigureGoodCase.java)
+
+---
+### 아이템 24 멤버클래스는 되도록 static 으로 만들라.
+- 중첩클래스 : 다른 클래스 안에 정의된 클래스. 자신을 감싼 바깥 클래스에서만 쓰여야 하며, 그 외 쓰임새가 있다면 톱레벨 클래스로 만들어야 한다. 
+  - 종류 : 정적 멤버 클래스, 멤버 클래스, 익명 클래스, 지역 클래스 
+1. [정적 멤버 클래스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/StaticMemberClass.java)
+   - 바깥 클래스와 함께 쓰일때만 유용한 public 도우미 클래스로 사용
+2. [멤버 클래스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/MemberClass.java)
+   - 바깥 인스턴스 없이는 생성이 불가능하며 바깥 인스턴스 - 멤버 인스턴스는 연결되어있다. 
+   - 보통 바깥 인스턴스를 생성자로 생성할때, 멤버 클래스를 인스턴스로 만들어 주는것이 보통이지만, 바깥 인스턴스를 호출 해 수동으로 만들기도 한다. 
+   - 멤버 클래스는 "어댑터"를 정의할때 자주 쓰인다. 
+     - 어떤 클래스의 인스턴스를 감싸 마치 다른 클래스의 인스턴스처럼 보이게 하는것.
+       - HashMap.keySet() 함수를 보면 AbstractSet을 구현한 멤버 클래스인 KeySet을 반환한다. 
+       
