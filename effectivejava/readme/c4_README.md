@@ -240,10 +240,37 @@ public final class PhysicalConstants {
   - 종류 : 정적 멤버 클래스, 멤버 클래스, 익명 클래스, 지역 클래스 
 1. [정적 멤버 클래스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/StaticMemberClass.java)
    - 바깥 클래스와 함께 쓰일때만 유용한 public 도우미 클래스로 사용
+   - [private 정적 멤버 클래스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/PrivateStaticMemberClass.java)
+     - 흔히 바깥 클래스가 표현하는 객체의 한 부분을 나타낼때 많이 쓴다. 
 2. [멤버 클래스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/MemberClass.java)
-   - 바깥 인스턴스 없이는 생성이 불가능하며 바깥 인스턴스 - 멤버 인스턴스는 연결되어있다. 
+   - 바깥 인스턴스 없이는 생성이 불가능하며 바깥 인스턴스 - 멤버 인스턴스는 연결되어있다.
+     - 멤버클래스에서 바깥인스턴스클래스.this 를 통해 바깥 클래스를 참조할수 있다. 
+       - [MemberClass.this.return3](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch04/item24/MemberClass.java)
    - 보통 바깥 인스턴스를 생성자로 생성할때, 멤버 클래스를 인스턴스로 만들어 주는것이 보통이지만, 바깥 인스턴스를 호출 해 수동으로 만들기도 한다. 
    - 멤버 클래스는 "어댑터"를 정의할때 자주 쓰인다. 
      - 어떤 클래스의 인스턴스를 감싸 마치 다른 클래스의 인스턴스처럼 보이게 하는것.
-       - HashMap.keySet() 함수를 보면 AbstractSet을 구현한 멤버 클래스인 KeySet을 반환한다. 
+       - HashMap.keySet() 함수를 보면 AbstractSet을 구현한 멤버 클래스인 KeySet을 반환한다.
+         - [HashMapAdapter](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch04/Example.java)
+   - ### 멤버클래스에서 바깥 인스턴스를 참조할 일이 없다면 무조건 static을 붙여 정적 멤버클래스로 만들자
+     - 멤버 클래스 참조를 저장하려면 시간과 공간이 소비되고, 가비지컬렉션이 바깥 클래스의 인스턴스를 수거하지 못한다. 
        
+3. 익명클래스
+   - 사용 이유
+     1. 프로그램에서 일시적으로 사용되고 버려진다. 단발적으로 사용되는 객체일 경우에 사용된다. 
+        - UI 이벤트 처리, 스레드 객체 등(단발성 이벤트 처리)
+     2. 재사용이 없고, 확장성을 활용하는것이 유지보수에서 불리할때 
+   - 사용 방법
+     1. 상속 아래 익명 자식 객체를 만드는 방법 
+        - [AnonymousClassTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch04/Example.java)
+     2. 인터페이스를 구현한 익명 구현 객체
+        - [AnonymousInterfaceTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch04/Example.java)
+4. 정리
+   - 메서드 밖에서도 사용해야 하거나 정의하기엔 너무 길다면 "멤버 클래스"로 만든다. 
+   - 멤버 클래스 인스턴스 각각이 바깥 클래스를 참조한다면 "비정적 멤버클래스"로, 참조하지 않는다면 "정적 멤버클래스"로 만들어준다. 
+   - 클래스가 한 메서드 안에 쓰이면서 인스턴스를 생성하는 곳이 단 한곳이고, 해당타입으로 쓰기 적당한 부모 클래스나 인터페이스가 있다면 "익명클래스"로 만들고, 없다면 "지역클래스"로 만들자.
+       
+
+---
+### 아이템 25. 톱레벨 클래스는 한파일에 하나만 담으라.
+- 소스파일 하나에 톱레벨 클래스를 여러개 선언 하더라도 컴파일에 문제는 없으나, 많이 위험하다. 
+- 이렇게 하면 컴파일러가 한 클래스에 대해 정의를 여러개 만들어 내게 되고, 소스파일을 어떤 순서로 컴파일 하느냐에 따라 프로그램의 동작이 달라질 수 있다. 
