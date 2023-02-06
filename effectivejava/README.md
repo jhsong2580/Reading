@@ -2,4 +2,6 @@
 
 [모든 객체의 공통 메서드](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c3_README.md)
 
-[클래스와 인터페이스e](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c4_README.md)
+[클래스와 인터페이스](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c4_README.md)
+
+[제네릭](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c5_README.md)
