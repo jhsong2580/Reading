@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import domain.ch05.item26.ClassLiteralSource;
 import domain.ch05.item26.ClassLiteralSource.ClassLiteralMap;
@@ -21,7 +22,9 @@ import domain.ch05.item31.MaxUtils;
 import domain.ch05.item31.Stack;
 import domain.ch05.item32.Variables;
 import domain.ch05.item33.Factories;
+import domain.ch05.item33.SuperTypeTokenFactories;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -242,6 +245,21 @@ public class Example {
         );
     }
 
+    @Test
+    public void SuperTypeTokenFactoryTest (){
+        //given
+        SuperTypeTokenFactories factories = new SuperTypeTokenFactories();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("hello");
 
+        //when
+        factories.put(new ParameterizedTypeReference<List<String>>() {
+        }, list);
 
+        List<String> data = factories.get(new ParameterizedTypeReference<List<String>>() {
+        });
+
+        //then
+        assertThat(data.get(0)).isEqualTo("hello");
+    }
 }

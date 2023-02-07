@@ -125,6 +125,9 @@ stamps.add(new Coin()); // 컴파일 에러 발생
   - 데이터베이스의 행은 임의의 다른 타입의 열을 가질수 있어, 이런 모습에서 "이종 컨테이너 패턴"을 사용할수 있다. s
     - [예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch05/item33/Factories.java)
       - class.cast를 사용하는 이유는 내부에서 타입 체크를 하기 때문에 컴파일 시 "타입 미검사 경고" 가 뜰것이다.
+    - 이 예시는 실체화 불가 타입(List<String>)등에 대해서는 지원이 되지 않는다. (<String>이란 정보는 사라지고 List만 남기 때문)
+      - [예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch05/item33/SuperTypeTokenFactories.java)
+        - 슈퍼 타입 토큰을 통해 실체화 불가 타입에 대해서 지원한다. 
 - JAVA에서는 checkedSet, checkedList, checkedMap같은 메서드가 이 방식을 적용한 컬렉션 래퍼들이다.
   - 각 각 2개의 매개변수를 갖고, 해당 Collection이 타입 안전한지 확인할수 있는 List로 감싸준다 
     - [CollectionTypeCheckTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch05/Example.java)
