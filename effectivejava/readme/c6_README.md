@@ -40,3 +40,28 @@
   - 즉 Hash는 Hash Code를 키로 하여, 데이터를 적재하는 반면 Enum의 경우 Ordinal값이 존재하는 것을 활용하여, 데이터를 바로 엑섹스 할수 있는 효과가 있다.
 - Enum의 상수값을 통해 Enum객체를 찾을때, 해당 상수를 기반으로 배열을 static으로 생성 해 놓은 뒤에 찾는 방법도 좋다 
   - [예시_TRANSITION_MAP](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item37/Phase.java)
+
+---
+### 아이템 38 확장할수 있는 열거 타입이 필요하면 인터페이스를 사용하라
+- 기능 확장이 필요한 Enum이 필요하면, Inteface를 상속하고 각 Enum 값 별 구현하라 
+  - [interface](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item38/Operation.java)
+    - [impl1](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item38/ExtendedOperation.java)
+    - [impl2](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item38/BasicOperation.java)
+  - 아래 예시와 같이 제너릭을 통해 확장성 있게 사용할 수 있다. 
+    - [OperationEnumCheck](https://github.com/jhsong2580/Reading/blob/mastereffectivejava/src/test/java/ch06/Example.java)
+- 열거 타입 자체는 확장할 수 없지만, interface와 interface를 구현하는 Enum type을 사용해 같은 효과를 낼수 있다. 
+  - 이렇게 하면 클라이언트는 자신만의 Enum Type을 만들수가 있고 확장해 사용할 수 있다. 
+
+---
+### 명명 패턴 보다 Annotation을 사용하라
+- 명명 패턴의 단점
+  1. 오타가 나면 알아차리기 힘들다. 
+  2. 올바른 프로그램 요소에서만 사용되는것을 확인하기 어렵다. 
+  3. 프로그램 요소를 매개변수로 전달할 마땅한 방법이 없다. 
+ 
+- Meta-Annotation : Annotation 선언에 사용되는 Annotation
+  - @Test 내에 @Retention, @Target같은 선언형 Annotation을 말한다. 
+    - @Retention : 유지 범위 
+      - @Retention(RetentionPolicy.RUNTIME) : 런타임에도 이 Annotation이 유지되어야 한다 
+    - @Target : Annotation 설정 대상 
+      - @Target(ElementType.METHOD) : 반드시 메서드 선언에만 적용시킬 수 있다.

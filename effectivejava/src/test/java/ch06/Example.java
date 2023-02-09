@@ -1,25 +1,19 @@
 package ch06;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LONG;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import domain.ch06.Operation;
 import domain.ch06.item37.Phase;
 import domain.ch06.item37.Phase.Transition_GOODCASE;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
+import domain.ch06.item38.BasicOperation;
+import domain.ch06.item38.ExtendedOperation;
 import org.junit.jupiter.api.Test;
 
 public class Example {
 
     @Test
-    public void EnumAbstractFunctionTest (){
+    public void EnumAbstractFunctionTest() {
         //given
         double x = 5;
         double y = 2;
@@ -36,7 +30,7 @@ public class Example {
     }
 
     @Test
-    public void check2DimensionEnums (){
+    public void check2DimensionEnums() {
         Transition_GOODCASE deposit = Transition_GOODCASE.getStatus(Phase.GAS, Phase.SOLID);
         Transition_GOODCASE deposit1 = Transition_GOODCASE.getStatus(Phase.LIQUID, Phase.SOLID);
 
@@ -46,4 +40,22 @@ public class Example {
         );
         //then
     }
+
+    @Test
+    public void OperationEnumCheck() {
+        //given
+        execute(BasicOperation.class, 3, 1);
+        execute(ExtendedOperation.class, 3, 1);
+        //when
+
+        //then
+    }
+
+    private <T extends Enum<T> & domain.ch06.item38.Operation> void execute(
+        Class<T> opEnumType, double x, double y) {
+        for (domain.ch06.item38.Operation operation : opEnumType.getEnumConstants()) {
+            System.out.println(operation.name() + " " + operation.apply(x, y));
+        }
+    }
+
 }
