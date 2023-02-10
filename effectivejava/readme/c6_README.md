@@ -65,3 +65,11 @@
       - @Retention(RetentionPolicy.RUNTIME) : 런타임에도 이 Annotation이 유지되어야 한다 
     - @Target : Annotation 설정 대상 
       - @Target(ElementType.METHOD) : 반드시 메서드 선언에만 적용시킬 수 있다.
+- Annotation을 통해 값을 전달할 수 있다. 
+  - [MakerAnnotationTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch06/Example.java)
+- JAVA 8 에서는 여러 개의 값을 받는 Annotation을 다른 방식으로 만들 수 있다. 
+  - 배열 매개변수를 사용하는 대신 @Repetable Annotation을 다는 방식이다. 
+  - 주의사항
+    1. @Repetable을 단 Annotation을 반환하는 '컨테이너 Annotation'을 하나 더 정의하고, @Repetable에 이 컨테이너 Annotation의 Class을 매개변수로 전달해야한다. 
+    2. 컨테이너 Annotation는 내부 Annotation타입의 배열을 반환하는 value method를 정의해아 한다. 
+    3. 컨테이너 AnnotationType에는 적절한 @Retention과 @Target을 명시해야한다. 
