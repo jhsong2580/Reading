@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Repeatable(RepeatableCustomContainer.class)
 public @interface CustomAnnotation {
-    Class<? extends Throwable> value();
+    Class<? extends Throwable> value() default RuntimeException.class;
 }

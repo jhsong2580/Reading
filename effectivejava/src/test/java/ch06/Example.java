@@ -10,7 +10,10 @@ import domain.ch06.item38.BasicOperation;
 import domain.ch06.item38.ExtendedOperation;
 import domain.ch06.item39.CustomAnnotation;
 import domain.ch06.item39.RepeatableCustomContainer;
+import domain.ch06.item40.NotOverrideBigram;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class Example {
@@ -62,7 +65,7 @@ public class Example {
     }
 
     @Test
-    public void MakerAnnotationTest () throws ClassNotFoundException, NoSuchMethodException {
+    public void MakerAnnotationTest() throws ClassNotFoundException, NoSuchMethodException {
         //given
         Class<?> testClass = Class.forName("domain.ch06.item39.ClassForAnnotation");
         Method testMethod = testClass.getDeclaredMethod("testMethod");
@@ -76,15 +79,18 @@ public class Example {
     }
 
     @Test
-    public void RepeatableMarkerAnnotationTest ()
+    public void RepeatableMarkerAnnotationTest()
         throws ClassNotFoundException, NoSuchMethodException {
         //given
         Class<?> testClass = Class.forName("domain.ch06.item39.ClassForAnnotation");
-        Method repeatableAnnotationMethod = testClass.getDeclaredMethod("repeatableCustomAnnotationMethod");
+        Method repeatableAnnotationMethod = testClass.getDeclaredMethod(
+            "repeatableCustomAnnotationMethod");
         Method oneAnnotationMethod = testClass.getDeclaredMethod("testMethod");
 
-        //when
-        CustomAnnotation[] repeatableAnnotations = repeatableAnnotationMethod.getAnnotationsByType(
+        //when (함수에 대해 factory, Annotation 배열로 가져올 수 있다. ( 아래 assert 문을 참고하자 )
+        RepeatableCustomContainer repeatableCustomContainer = repeatableAnnotationMethod.getAnnotation(
+            RepeatableCustomContainer.class);
+        CustomAnnotation[] customAnnotations = repeatableAnnotationMethod.getAnnotationsByType(
             CustomAnnotation.class);
 
         //then
@@ -95,12 +101,40 @@ public class Example {
             () -> assertThat(
                 oneAnnotationMethod.isAnnotationPresent(CustomAnnotation.class)).isTrue(),
             // 하나의 어노테이션만 설정되어 있으면 해당 어노테이션 클래스가 반환된다.
-            () -> {
-                assertThat(repeatableAnnotations).extracting(CustomAnnotation::value)
-                    .contains(RuntimeException.class, Throwable.class, Exception.class);
-            }
+            () -> assertThat(customAnnotations)
+                .extracting(CustomAnnotation::value)
+                .extracting(Class::getName)
+                .containsExactly(
+                    RuntimeException.class.getName(),
+                    Throwable.class.getName(),
+                    Exception.class.getName()
+                ),
+            () -> assertThat(repeatableCustomContainer.value())
+                .extracting(CustomAnnotation::value)
+                .extracting(Class::getName)
+                .containsExactly(
+                    RuntimeException.class.getName(),
+                    Throwable.class.getName(),
+                    Exception.class.getName()
+                )
         );
 
     }
 
+    @Test
+    public void UseOverrideAnnotationToUpperClassMethod() {
+        //given
+        Set<NotOverrideBigram> bigrams = new HashSet<>();
+
+        //when
+        for (int i = 0; i < 10; i++) {
+            for (char chr = 'a'; chr <= 'z'; chr++) {
+                bigrams.add(new NotOverrideBigram(chr, chr));
+            }
+        }
+
+        //then
+        //// equals, hashcode를 정의하였으나, set에 중복이 생겨버렸다.
+        assertThat(bigrams).hasSize(10 * ('z' - 'a' + 1));
+    }
 }

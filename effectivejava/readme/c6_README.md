@@ -72,4 +72,23 @@
   - 주의사항
     1. @Repetable을 단 Annotation을 반환하는 '컨테이너 Annotation'을 하나 더 정의하고, @Repetable에 이 컨테이너 Annotation의 Class을 매개변수로 전달해야한다. 
     2. 컨테이너 Annotation는 내부 Annotation타입의 배열을 반환하는 value method를 정의해아 한다. 
-    3. 컨테이너 AnnotationType에는 적절한 @Retention과 @Target을 명시해야한다. 
+    3. 컨테이너 AnnotationType에는 적절한 @Retention과 @Target을 명시해야한다.
+  - [RepeatableMarkerAnnotationTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch06/Example.java)
+
+---
+### 아이템 40 @Override Annotation을 일관되게 사용하라 
+- 상위 클래스의 메서드를 재정의 하려는 모든 메서드에 @Override를 달자. 
+  - [잘못된_예](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item40/NotOverrideBigram.java)
+    - Override Annotation을 붙이지 않아 컴파일이 정상적으로 되었고, 그 결과 아래와 같은 장애상황이 발생한다 
+      - [UseOverrideAnnotationToUpperClassMethod](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch06/Example.java)
+  - [좋은 예](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch06/item40/OverrideBigram.java)
+- 구체 클래스에서 상위 클래스의 추상메서드를 재정의 할때는, 굳이 Override를 달지 않아도 된다. 
+  - 구체 클래스에서 아직 재정의가 안된 추상 메서드를 정의하지 않았을때는 @Override 태그와 상관없이 컴파일이 되지 않는다. 
+
+### 아이템 41 정의하려는 것이 타입이라면, 마커 인터페이스를 사용하라.
+- marker interface : 자신을 구현하는 클래스가 특정 속성을 가짐을 표시해주는 interface
+  - ex) Serializable : 자신을 구현한 클래스의 인스턴스는 "ObjectOutputStream"을 통해 직렬화 될수 있다고 알려준다. 
+- marker interface가 marker annotation보다 좋은 이유
+  1. marker interface는 이를 구현한 클래스의 인스턴스를 구분하는 타입으로 쓸 수 있지만, 마커 애너테이션은 그럴수 없다.
+     - marker interface는 하나의 Type이기 때문에, 타입 체크를 런타임이 아닌 컴파일 시점에 진행한다. 
+     - 
