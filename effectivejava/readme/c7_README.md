@@ -3,8 +3,8 @@
 ---
 
 ### 익명 클래스보다는 람다를 사용하라
-- [AnonymousClassForStringSort](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c7_README.md)
-- [LamdaForStringSort](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c7_README.md)
+- [AnonymousClassForStringSort](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+- [LamdaForStringSort](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
 - 익명클래스를 람다로 바꾸면 자질구레한 코드들이 사라지고, 어떤 동작을 하는지 명확하게 드러난다. 
   - 컴파일러가 알아서 문맥을 살펴 타입, return값 등을 설정해준다. 
 - 이전에 만든 Operation을 아래와 같이 변경할 수 있다. 
