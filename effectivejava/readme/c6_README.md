@@ -91,4 +91,13 @@
 - marker interface가 marker annotation보다 좋은 이유
   1. marker interface는 이를 구현한 클래스의 인스턴스를 구분하는 타입으로 쓸 수 있지만, 마커 애너테이션은 그럴수 없다.
      - marker interface는 하나의 Type이기 때문에, 타입 체크를 런타임이 아닌 컴파일 시점에 진행한다. 
-     - 
+  2. 적용 대상을 더 정밀하게 지정할 수 있다. 
+     - marker annotation은 @Target을 통해 어느 타입에다가 지정할수 있는지를 확인하고 컴파일 단계에서 잡을수 있다.
+       - 하지만 어떤 Class를 구현한 Class에만 적용하고 싶은 마커를 잡을수는 없다. 
+- marker annotation이 더 나은 것은 없을까 ? 
+  -1. 거대한 Annotation System 지원을 받을 수 있다.
+- 상황 별 marker annotation vs marker interface
+  - marker annotation
+    1. Class와 Interface외의 프로그램 요소(모듈, 패키지, 필드)에 마킹해야할 때 Annotation을 쓸수밖에 없다.
+  - marker interface
+    1. 마킹이 된 객체를 인자로 받는 메서드가 있다면, 해당 객체에는 marker interface를 설정해야 한다. 
