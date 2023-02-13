@@ -60,7 +60,7 @@ public class Example {
     private <T extends Enum<T> & domain.ch06.item38.Operation> void execute(
         Class<T> opEnumType, double x, double y) {
         for (domain.ch06.item38.Operation operation : opEnumType.getEnumConstants()) {
-            System.out.println(operation.name() + " " + operation.apply(x, y));
+            System.out.println(operation.apply(x, y));
         }
     }
 
