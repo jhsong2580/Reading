@@ -49,3 +49,36 @@
 
 ---
 ### 아이템 45 스트림은 주의해서 사용하라 
+- 스트림은 소스 스트림 -> n개의 중간연산 -> 종단연산 으로 구성된다. 
+- 스트림 파이프라인은 Laxy Evaluation 된다. 종단 연산이 호출 될때 Evalutation되며, 종단 연산에 쓰이지 않는 데이터는 계산에 쓰이지 않는다. 
+- 파이프라인을 병렬로 호출하기 위해 parallel 메서드를 호출하면 되나, 효과를 볼수있는 상황은 많지 않다 
+- 스트림을 사용하지 않는 예 
+  - [getDictionaryMapNoStream](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch07/Item45/Anagrams.java)
+- 스트림을 너무 과도하게 사용한 예 (String 값을 sort하는 부분을 Stream으로 처리한다. 너무 가독성이 떨어진다)
+  - [getDictionaryMapWithBadStream](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch07/Item45/Anagrams.java)
+- 스트림을 내 key를 처리하는 부분을 함수화 하여 가독성을 높인다 
+  - [getDictionaryMapWithGoodStream](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch07/Item45/Anagrams.java)
+- 스트림 사용시 주의사항 
+  - 람다에선 final이거나 사실상 final인 변수를 읽을 수 있고 지역 변수를 수정하는건 불가능하다 
+- 스트림을 사용하면 좋은 경우 
+  - 원소들의 시퀀스를 일관되게 변환한다. 
+  - 원소들의 시퀀스를 필터링 한다 
+  - 원소들의 시퀀스를 하나의 연산을 사용해 결합한다 
+  - 원소들의 시퀀스를 컬렉션에 모은다 
+  - 원소들의 시퀀스에서 특정 조건을 만족하는 원소를 찾는다.
+
+### 아이템 46 스트림에서는 부작용 없는 함수를 사용하라 
+- 스트림은 계산을 일련의 "변환"으로 재구성 하는 부분이다. 이때 각 변환 단계는 이전 단계의 결과를 받아 처리하는 순수 함수여야 한다. 
+  - 순수함수 : 오직 입력한 값 만이 결과에 영향을 주는 함수
+- 아래 예시는 스트림을 가장한 반복 코드이다. 
+  - [StreamBadCase1Test](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - 연산한 결과를 보여주는게 아닌, 다른 동작(freq map에 값을 추가)이 추가되어 있어 가독성도 떨어진다. 
+  - 내부 연산이 외부 값을 변경한다. 
+- 아래 예시는 스트림으로 잘 작성한 코드이다.
+  - [StreamGoodCaseTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - 스트림은 내부 연산만 동작하며, 외부 값을 연산중에 변경하지 않는다. 또한 가독성도 더욱 좋아졌다. 
+- Stream에서는 Collector를 자주 사용한다 
+  - [StreamGetFreqTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - [StreamToMapTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - [StreamToMapTestWithMergeMax](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - [StreamToMapTestWithMergeLast](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)

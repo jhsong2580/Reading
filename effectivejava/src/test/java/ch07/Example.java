@@ -1,22 +1,26 @@
 package ch07;
 
+import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import domain.ch07.Item45.Anagrams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -134,5 +138,199 @@ public class Example {
 
         //when
         hi.accept("hihi");
+    }
+
+    @Test
+    public void Anagrams (){
+        //given
+        Anagrams anagrams = new Anagrams();
+
+        //when
+        Map<String, List<String>> dictionaryMap = anagrams.getDictionaryMapNoStream();
+        Map<String, List<String>> dictionaryMapWithBadStream = anagrams.getDictionaryMapWithBadStream();
+        Map<String, List<String>> dictionaryMapWithGoodStream = anagrams.getDictionaryMapWithGoodStream();
+
+        //then
+        check(dictionaryMap);
+        check(dictionaryMapWithBadStream);
+        check(dictionaryMapWithGoodStream);
+    }
+
+    private void check(
+        Map<String, List<String>> dictionaryMap) {
+        assertAll(
+            () -> assertThat(dictionaryMap.keySet())
+                .containsExactly("aelpst", "abcde"),
+            () -> assertThat(dictionaryMap.get("aelpst"))
+                .containsExactly("staple", "stplea", "petals", "ptleas"),
+            () -> assertThat(dictionaryMap.get("abcde"))
+                .containsExactly("abdec")
+        );
+    }
+
+    @Test
+    @DisplayName("스트림을 가장한 반복코드")
+    public void StreamBadCase1Test (){
+        //given
+        Map<String, Long> freq = new HashMap<>();
+        List<String> strings = Arrays.asList("Abcd", "aBcd", "abCd", "abcD");
+
+        //when
+        strings.forEach(
+            word -> {
+                freq.merge(word.toLowerCase(), 1L, Long::sum);
+            }
+        );
+
+        //then
+        assertThat(freq.get("abcd")).isEqualTo(4);
+    }
+
+    @Test
+    public void StreamGoodCaseTest (){
+        //given
+        Map<String, Long> freq ;
+        List<String> strings = Arrays.asList("Abcd", "aBcd", "abCd", "abcD");
+
+        //when
+        freq = strings.stream().collect(
+            Collectors.groupingBy(
+                String::toLowerCase,
+                Collectors.counting()
+            )
+        );
+
+        //then
+        assertThat(freq.get("abcd")).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("빈도표에서 가장 흔한 단어 10개를 뽑아내는 파이프라인")
+    public void StreamGetFreqTest (){
+        //given
+        List<String> strings = Arrays.asList("Abcd", "aBcd", "abCd", "abcD", "Abcd");
+
+        //when
+        List<String> collect = strings.stream()
+            .sorted(comparing(String::toString).reversed()) // 비교자에서 사용할 값을 추출 한 후 역순으로.
+            .limit(10)
+            .collect(Collectors.toList());
+
+        //then
+        assertThat(collect)
+            .containsExactly("abcD", "abCd", "aBcd", "Abcd", "Abcd");
+    }
+
+    private static enum TestEnum {
+        V1, V2, V3
+    }
+
+
+    @Test
+    @DisplayName("toMap 수집기를 사용하여 문자열을 열거 타입 상수에 매핑")
+    public void StreamToMapTest() {
+        //when
+        Map<String, TestEnum> enums = Stream.of(TestEnum.values())
+            .collect(
+                Collectors.toMap(
+                    Enum::name, //key setting
+                    testEnum -> testEnum //value setting
+                )
+            );
+
+        assertAll(
+            () -> assertThat(enums.keySet())
+                .containsExactly("V1", "V2", "V3"),
+            () -> assertThat(enums.values())
+                .containsExactly(TestEnum.V1, TestEnum.V2, TestEnum.V3)
+        );
+    }
+
+    private static class Album {
+
+        private String name;
+        private long sales;
+
+        public Album(String name, long sales) {
+            this.name = name;
+            this.sales = sales;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public long getSales() {
+            return sales;
+        }
+
+        @Override
+        public String toString() {
+            return "Album{" +
+                "name='" + name + '\'' +
+                ", sales=" + sales +
+                '}';
+        }
+    }
+    @Test
+    @DisplayName("toMap 수집기에서 특정 원소를 연관지을수 있다")
+    public void StreamToMapTestWithMergeMax (){
+        //given
+        List<Album> albums = Arrays.asList(
+            new Album("a1", 1_000),
+            new Album("a1", 3_000),
+            new Album("c1", 2_000),
+            new Album("d1", 1_500),
+            new Album("d1", 4_500)
+        );
+
+        //when
+        Map<String, Album> collect = albums.stream()
+            .collect(
+                Collectors.toMap(
+                    Album::getName, //key는 Album의 이름으로
+                    a -> a,         //value는 Album 자신으로
+                    BinaryOperator.maxBy(comparing(Album::getSales)) //머지 조건은 가장 Sales가 큰 애를 남긴다.
+                )
+            );
+
+        //then
+        assertAll(
+            () -> assertThat(collect).hasSize(3),
+            () -> assertThat(collect.get("a1").getSales()).isEqualTo(3_000),
+            () -> assertThat(collect.get("c1").getSales()).isEqualTo(2_000),
+            () -> assertThat(collect.get("d1").getSales()).isEqualTo(4_500)
+        );
+    }
+
+    @Test
+    @DisplayName("toMap 수집기에서 특정 원소를 연관지을수 있다")
+    public void StreamToMapTestWithMergeLast (){
+        //given
+        List<Album> albums = Arrays.asList(
+            new Album("a1", 1_000),
+            new Album("a1", 3_000),
+            new Album("c1", 2_000),
+            new Album("d1", 4_500),
+            new Album("d1", 1_500)
+        );
+
+        //when
+        Map<String, Album> collect = albums.stream()
+            .collect(
+                Collectors.toMap(
+                    Album::getName, //key는 Album의 이름으로
+                    a -> a,         //value는 Album 자신으로
+                    (t, t2) -> t2  //머지 조건은 가장 뒤에 있는 Album을 남긴다.
+                )
+            );
+
+        //then
+        assertAll(
+            () -> assertThat(collect).hasSize(3),
+            () -> assertThat(collect.get("a1").getSales()).isEqualTo(3_000),
+            () -> assertThat(collect.get("c1").getSales()).isEqualTo(2_000),
+            () -> assertThat(collect.get("d1").getSales()).isEqualTo(1_500)
+        );
     }
 }
