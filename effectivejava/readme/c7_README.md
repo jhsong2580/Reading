@@ -82,3 +82,21 @@
   - [StreamToMapTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
   - [StreamToMapTestWithMergeMax](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
   - [StreamToMapTestWithMergeLast](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+  - [StreamGroupByTest](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch07/Example.java)
+
+---
+### 아이템 47 반환타입으로는 스트림보다 컬렉션이 낫다
+- Stream < - > Iterable 변환을 자바에서 제공하지 않기때문에, 둘 다 사용이 가능한 Collection으로 반환해 주는 편이 낫다. 
+- 반환할 시퀀스가 크다면, 전용 컬렉션을 구현하는 방안을 검토해보자. 
+  - {a,b,c} 멱집합을 반환하는 Collection을 만든다고 했을때, 모든 집합을 담는 리스트를 반환한다면 데이터가 매우 커진다 .
+  - 예시처럼 AbstractList를 만들어 반환해보자 (실제 데이터는 넣지 않고 연산에 의해 반환)
+    - [예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/main/java/domain/ch07/item47/PowerSet.java)
+
+---
+### 아이템 48 스트림 병렬화는 주의해서 적용하라
+- 데이터 소스가 Stream.iterate거나 중간 연산으로 limit를 쓰면 파이프라인 병렬화로는 성능 개선을 기대할 수 없다. 
+  - ArrayList, HashMap, HashSet,의 인스턴스이거나, int & long 범위 일때 병렬화 효과가 아주 좋다.
+    - 해당 자료구조들은 데이터를 원하느 ㄴ크기로 정확하게 나눌수 있어, 스레드 분배하기에 좋다. 
+    - 나누는 작업은 "Spliterator"가 담당하며, Spliterator 객체는 Stream/Iterable의 메서드로 가져올 수 있다.
+- 파이프라인 병렬화는 limit를 다룰 때 CPU 코어가 남는다면 원소를 몇개 더 처리한 후 제한된 개수 이후의 결과를 버려도 아무런 해가 없다고 가정한다.
+- 

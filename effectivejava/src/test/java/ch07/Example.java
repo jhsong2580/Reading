@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import domain.ch07.Item45.Anagrams;
+import domain.ch07.item47.SubLists;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -333,4 +334,35 @@ public class Example {
             () -> assertThat(collect.get("d1").getSales()).isEqualTo(1_500)
         );
     }
+
+    @Test
+    public void StreamGroupByTest (){
+        //given
+        List<String> strings = Arrays.asList("Abcd", "aBcd", "abCd", "abcD", "Abcd");
+
+        //when
+        Map<String, List<String>> collects = strings.stream().collect(
+            Collectors.groupingBy(
+                word -> alphabetize(word), // 소문자의 소팅된 문자열을 key로 하고
+                Collectors.toList() //value는 List로 담는다
+            )
+        );
+
+        //then
+        assertAll(
+            () -> assertThat(collects.get("abcd"))
+                .contains("Abcd", "aBcd", "abCd", "abcD", "Abcd")
+        );
+
+
+    }
+
+    private String alphabetize(String s) {
+        s = s.toLowerCase();
+        char[] a = s.toCharArray();
+
+        Arrays.sort(a);
+        return new String(a);
+    }
+
 }
