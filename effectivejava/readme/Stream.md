@@ -50,3 +50,9 @@
   - 객체를 정수로, double로, boolean값으로 ...
 - flatMapXXX();
   - 한개의 요소를 대체하는 복수개의 요소들로 구성된 새로운 스트림을 리턴
+- mapXXX();
+  - 요소를 대체하는 요소로 구성된 새로운 스트림을 리턴 
+- sorted()
+  - 정렬 중간처리
+- allMatch / anyMatch / noneMatch 
+  - 주어진 요소들에 대한 점검 처리 
