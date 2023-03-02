@@ -9,3 +9,5 @@
 [열거 타입과 애너테이션](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c6_README.md)
 
 [람다와 스트림](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c7_README.md)
+
+[메서드](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c8_README.md)

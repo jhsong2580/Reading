@@ -223,7 +223,7 @@ public class StreamStudy {
             .collect(
                 groupingBy(
                     Student::getSex, // 성별을 key로 묶는다.
-                    () -> new HashMap(),
+                    () -> new HashMap<String, List<Student>>(),
                     Collectors.mapping(student -> student, toList()) // 해당 값들을
                 )
             );
