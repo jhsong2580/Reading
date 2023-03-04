@@ -48,3 +48,51 @@
 - 이렇기 때문에 "근본적으로 다른" 매개변수들로 구성된 오버로딩 메서드는 확실하게 구분이 되기 때문에 위에 문제가 발생되지 않는다. 
   - 근본적으로 다른 -> null이 아닌 두 타입이 어느쪽도 형변환이 불가능함
 - [List클래스의_잘못된_오버로딩_예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch08/Example.java)
+- [List클래스의_잘못된_오버로딩_땜빵_예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch08/Example.java)
+- [다중오버로딩_문제예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch08/Example.java)
+
+---
+### item53 가변인수는 신중히 사용하라 
+- 가변 인수 메서드는 명시한 타입의 인수를 0개 이상 받을수 있다. 
+- 가변 인수 메서드에서 1개 이상의 조건을 걸때 방법
+```
+// bad case 
+int min (int... args) {
+    if (args.length == 0) {
+        throw ~~
+    }
+    // do something 
+}   
+
+//good case 
+int min (int firstArg, int... remainingArgs) {
+    int min = firstArg;
+    for(int args : remainingArgs) {
+        //compare min vs args 
+    }
+    //do something
+}
+```
+- 하지만 가변인수 메서드는 호출이 될 때 마다 배열을 새로 하나 할당하고 초기화 한다. 
+  - 1,2,3,4,5 개의 변수를 받는 오버로딩 메서드를 만든 후, 그 이상을 가변인수 메서드로 만들면 효율적으로 사용 할 수 있을것이다. 
+
+---
+### item54 null이 아닌, 빈 컬렉션이나 배열을 반환하라
+
+---
+### item55 Optional 반환은 신중히 하라. 
+- Optional도 Stream을 사용할 수 있다. 
+  - [OptionalStream예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch08/Example.java)
+- 컬렉션, 스트림, 배열, 옵셔널 같은 "컨테이너 타입"은 옵셔널로 감싸면 안된다. 
+  - 빈 Optional<List<T>> 보다는 빈 List<T>가 낫다. 
+- 박싱된 기본타입의 Optional보다 Optional에서 지원하는 Optionalint 등등을 사용하자
+  - [기본타입을_지원하는_Optional_예시](https://github.com/jhsong2580/Reading/blob/master/effectivejava/src/test/java/ch08/Example.java)
+- 즉 값을 반환하지 못할 가능성이 있고, 호출할 떄마다 반환값이 없을 가능성을 염두해야 하는 메서드라면 Optional을 반환할 상황일 수 있다. 
+  - 하지만 성능 저하가 뒤따르니, 민감한 메서드라면 Null이나 예외를 반환하는 편이 낫다.
+
+---
+### item56 공개된 API요소에는 항상 문서화 주석을 작성하라 
+- API를 문서화 하려면 공개된 모든 Class, Interface, Method, Field 선언에 문서화 주석을 달아야 한다.
+- 문서화 주석에는 클라이언트가 해당 메서드를 호출하기 위한 전제조건들을 모두 나열해야 한다. 
+- 또한 메서드가 성공적으로 동작 한 후의 사후 결과 또한 나열해야 한다. 
+
