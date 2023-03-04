@@ -11,3 +11,5 @@
 [람다와 스트림](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c7_README.md)
 
 [메서드](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c8_README.md)
+
+[일반적인 프로그래밍 원칙](https://github.com/jhsong2580/Reading/blob/master/effectivejava/readme/c9_README.md)
