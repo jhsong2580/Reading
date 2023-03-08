@@ -7,4 +7,6 @@ pluginManagement {
 }
 rootProject.name = 'study'
 include 'effectivejava'
+include 'kyh-JPA'
+include 'toby-spring-inflearn'
 
