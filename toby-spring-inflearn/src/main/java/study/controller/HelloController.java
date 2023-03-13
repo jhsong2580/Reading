@@ -1,6 +1,7 @@
 package study.controller;
 
 import java.util.Objects;
+import javax.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import study.annotation.MyComponent;
 import study.service.HelloService;
 
-@RequestMapping("/hello")
+
 @RestController
 public class HelloController {
 
@@ -22,9 +23,12 @@ public class HelloController {
         this.helloService = helloService;
     }
 
+    @PostConstruct
+    public void init() {
+        System.out.println(HelloController.class.getName() + " loaded");
+    }
 
-    @GetMapping()
-    @ResponseBody
+    @GetMapping("/hello")
     public ResponseEntity<?> hello(String name) {
         return ResponseEntity.ok(helloService.sayHello(Objects.requireNonNull(name)));
     }
