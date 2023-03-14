@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,19 @@ class HelloControllerTest {
         //then
         assertAll(
             () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-            () -> assertThat(response.getBody()).isEqualTo("Hello ! " + name),
-            () -> assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.TEXT_PLAIN)
+            () -> assertThat(response.getBody()).isEqualTo("*Hello ! " + name + "*"),
+            () -> assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE))
+                .startsWith(MediaType.TEXT_PLAIN_VALUE)
         );
+    }
 
+    @Test
+    public void HelloControllerTest (){
+        //given
+        HelloController helloController = new HelloController(name -> name);
+
+        //when
+        ResponseEntity<?> test = helloController.hello("test");
+        //then
     }
 }
