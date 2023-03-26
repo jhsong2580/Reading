@@ -1,31 +1,29 @@
 package autoConfiguration.configuration;
 
+import autoConfiguration.ConditionalMyOnClass;
 import autoConfiguration.MyAutoConfiguration;
-import autoConfiguration.configuration.JettyWebServerConfig.JettyCondition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @MyAutoConfiguration
-@Conditional(JettyCondition.class)
+@ConditionalMyOnClass(value = "org.eclipse.jetty.server.Server")
 public class JettyWebServerConfig {
 
     @Bean("jettyWebServerFactory")
+    @ConditionalOnMissingBean // ServletWebServerFactory가 Bean등록이 안되있다면 Bean등록
     public ServletWebServerFactory servletWebServerFactory() {
         return new JettyServletWebServerFactory();
     }
 
-    public static class JettyCondition implements Condition {
-
-        @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return true;
-        }
-    }
+//    public static class JettyCondition implements Condition {
+//
+//        @Override
+//        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+//            /* org.apache.catalina.startup.Tomcat 이라는 Class가 Bean으로 등록되어있으면 동작! */
+//            return ClassUtils.isPresent("org.eclipse.jetty.server.Server",
+//                context.getClassLoader());
+//        }
+//    }
 }

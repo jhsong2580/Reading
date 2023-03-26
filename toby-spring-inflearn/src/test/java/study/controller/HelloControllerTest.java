@@ -26,7 +26,7 @@ class HelloControllerTest {
 
         //when
         ResponseEntity<String> response = rest.getForEntity(
-            "http://localhost:8080/hello?name={name}", String.class, urlVals);
+            "http://localhost:8080/app/hello?name={name}", String.class, urlVals);
 
         //then
         assertAll(
