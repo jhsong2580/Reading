@@ -19,6 +19,14 @@ public class MyAutoConfigImportSelector implements DeferredImportSelector {
             "autoConfiguration/configuration/DispatcherServletConfig",
             "autoConfiguration/configuration/TomcatWebServerConfig",
             "autoConfiguration/configuration/JettyWebServerConfig",
+            "autoConfiguration/configuration/MyPropertyPlaceHolderConfig",
+            "autoConfiguration/configuration/MyPropertyPostProcessorConfig",
+            "autoConfiguration/configuration/ServerProperties",
+
+
+            "JdbcAutoConfiguration/configuration/DataSourceConfig",
+//            "autoConfiguration/MyConfigurationPropertiesImportSelector",
+
         };
     }
 }

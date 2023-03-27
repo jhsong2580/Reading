@@ -10,7 +10,7 @@ import study.annotation.MySpringBootApplication;
 @MySpringBootApplication
 public class MySpringApplication {
 
-    /* ApplicationRunner로 등록한 Bean은 환경 셋팅이 끝난 후에 한꺼번에 실행된다.  */
+    /* ApplicationRunner로 등록한 Bean은 Spring Context 셋팅이 끝난 후에 한꺼번에 실행된다.  */
     @Bean
     ApplicationRunner applicationRunner1(Environment env) { // Environment : Spring환경 변수들을 추상화 해놓음
         return (args) -> {
