@@ -9,4 +9,6 @@ rootProject.name = 'study'
 include 'effectivejava'
 include 'kyh-JPA'
 include 'toby-spring-inflearn'
+include 'test'
+include 'real-my-sql'
 
