@@ -1,0 +1,4 @@
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: "211.184.188.33:19092"
