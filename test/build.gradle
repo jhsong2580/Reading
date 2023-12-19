@@ -1,3 +1,6 @@
+version = '1.0.0'
+archivesBaseName = 'test-app' + version
+
 dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
